@@ -7,10 +7,10 @@
 |                                 | DELETE | `/api/auth/withdraw`              | 회원 탈퇴                           | ✅  |
 | **👤 User (프로필 / 팔로우 / 검색)**    |        |                                   |                                 |    |
 |                                 | GET    | `/api/users/me`                   | 내 프로필 조회                        | ✅  |
-|                                 | PUT    | `/api/users/me`                   | 내 프로필 수정 (username, bio, 이미지 등) | ✅  |
+|                                 | PATCH    | `/api/users/me`                   | 내 프로필 수정 (username, bio, 이미지 등) | ✅  |
 |                                 | GET    | `/api/users/{user_id}`            | 특정 사용자 프로필 조회                   | ❌  |
 |                                 | POST   | `/api/users/{user_id}/follow`     | 사용자 팔로우                         | ✅  |
-|                                 | DELETE | `/api/users/{user_id}/unfollow`   | 사용자 언팔로우                        | ✅  |
+|                                 | DELETE | `/api/users/{user_id}/follow`   | 사용자 언팔로우                        | ✅  |
 |                                 | GET    | `/api/users/{user_id}/followers`  | 팔로워 목록                          | ❌  |
 |                                 | GET    | `/api/users/{user_id}/followings` | 팔로잉 목록                          | ❌  |
 |                                 | GET    | `/api/users/{user_id}/posts`       | 특정 사용자의 게시글 목록                  | ❌  |
@@ -26,7 +26,7 @@
 |                                 | GET    | `/api/posts/feed`                 | 홈 피드 (팔로잉 유저 게시글 최신순)           | ✅  |
 |                                 | POST   | `/api/posts`                      | 게시글 작성 (텍스트, 해시태그, 이미지 최대 10장)         | ✅  |
 |                                 | GET    | `/api/posts/{post_id}`            | 게시글 상세 조회                       | ❌  |
-|                                 | PUT    | `/api/posts/{post_id}`            | 게시글 수정                          | ✅  |
+|                                 | PATCH    | `/api/posts/{post_id}`            | 게시글 수정                          | ✅  |
 |                                 | DELETE | `/api/posts/{post_id}`            | 게시글 삭제                          | ✅  |
 |                                 | POST   | `/api/posts/{post_id}/likes`      | 게시글 좋아요 등록                      | ✅  |
 |                                 | DELETE | `/api/posts/{post_id}/likes`      | 게시글 좋아요 취소                      | ✅  |
@@ -34,7 +34,7 @@
 | **💬 Comment (댓글)**             |        |                                   |                                 |    |
 |                                 | POST   | `/api/posts/{post_id}/comments`   | 게시글에 댓글 작성                      | ✅  |
 |                                 | GET    | `/api/posts/{post_id}/comments`   | 게시글 댓글 목록 조회                    | ❌  |
-|                                 | PUT    | `/api/posts/{post_id}/comments/{comment_id}`   | 댓글 수정                | ✅  |
+|                                 | PATCH    | `/api/posts/{post_id}/comments/{comment_id}`   | 댓글 수정                | ✅  |
 |                                 | DELETE | `/api/posts/{post_id}/comments/{comment_id}`      | 댓글 삭제                           | ✅  |
 |                                 | POST   | `/api/posts/{post_id}/comments/{comment_id}/replies`   | 대댓글 작성                  | ✅  |
 | **💭 Chat (1:1 채팅)**            |        |                                   |                                 |    |
