@@ -42,6 +42,8 @@
 |                                 | POST   | `/api/chats/start`                | 새 채팅방 생성 (상대 user_id 입력)        | ✅  |
 |                                 | GET    | `/api/chats/{chat_id}`            | 특정 채팅방 메시지 조회                   | ✅  |
 |                                 | POST   | `/api/chats/{chat_id}/messages`   | 메시지 전송(이미지 파일 전송도 가능)                 | ✅  |
+|                                 | PATCH | `/api/chats/{chat_id}/messages/{message_id}`  | 메시지 수정                        | ✅  |
+|                                 | DELETE | `/api/chats/{chat_id}/messages/{message_id}` | 메시지 삭제                        | ✅  |
 |                                 | DELETE | `/api/chats/{chat_id}`            | 채팅방 나가기                         | ✅  |
 | **🚨 Report (신고)** *(선택)*       |        |                                   |                                 |    |
 |                                 | POST   | `/api/reports`                    | 유저/게시글/댓글/채팅/상품 신고 등록           | ✅  |
