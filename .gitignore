@@ -13,7 +13,7 @@ __pycache__/
 # =====================
 venv/
 .env
-# .env.*        # 예: .env.local, .env.dev
+.env.*        # 예: .env.local, .env.dev
 
 # =====================
 # IDE / Editor
