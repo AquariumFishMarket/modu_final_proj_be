@@ -7,8 +7,6 @@ import os
 # .env 파일 로드
 load_dotenv()
 
-# .env 파일 내 DATABASE_URL 예시:
-# DATABASE_URL=postgresql+psycopg2://username:password@localhost:5432/dbname
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -28,7 +26,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # 서버 실행 시 테이블 자동 생성 (임시)
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 # ✅ 의존성 주입용 DB 세션 함수
 # - FastAPI의 Depends에서 사용됨
