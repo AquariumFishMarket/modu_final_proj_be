@@ -9,7 +9,7 @@ class Session(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    refresh_token = Column(String(255), nullable=False)
+    refresh_token_hash = Column(String(255), nullable=False)
     device_info = Column(String(255), nullable=True)
     ip_address = Column(String(45), nullable=True)
     is_valid = Column(Boolean, default=True)

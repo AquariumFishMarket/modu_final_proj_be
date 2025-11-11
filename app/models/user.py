@@ -18,8 +18,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     # 계정 관련
-    account_id = Column(String(50), unique=True, nullable=False, index=True)  # 로그인용 고유 계정 ID
-    username = Column(String(50), nullable=False)                            # 닉네임 (중복 허용)
+    account_id = Column(String(50), unique=True, nullable=True, index=True)  # 로그인용 고유 계정 ID
+    username = Column(String(50), nullable=True)                            # 닉네임 (중복 허용)
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
 
