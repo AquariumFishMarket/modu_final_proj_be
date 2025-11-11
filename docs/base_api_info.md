@@ -6,6 +6,7 @@
 |                                 | POST   | `/api/auth/logout`                | 로그아웃 (JWT 무효화)                  | ✅  |
 |                                 | DELETE | `/api/auth/withdraw`              | 회원 탈퇴                           | ✅  |
 | **👤 User (프로필 / 팔로우 / 검색)**    |        |                                   |                                 |    |
+|                                 | POST  | `/api/users/initial-profile`      | 초기 프로필 설정 (username, bio, 이미지 등) | ✅(임시 JWT)  |
 |                                 | GET    | `/api/users/me`                   | 내 프로필 조회                        | ✅  |
 |                                 | PATCH    | `/api/users/me`                   | 내 프로필 수정 (username, bio, 이미지 등) | ✅  |
 |                                 | GET    | `/api/users/{user_id}`            | 특정 사용자 프로필 조회                   | ❌  |
