@@ -2,7 +2,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime
-
+from fastapi import UploadFile, Form
 
 # -----------------------------
 # Common / Base
@@ -35,10 +35,19 @@ class InitialProfileRequest(BaseModel):
     username: str
     account_id: str
     bio: Optional[str] = None
-    profile_image_url: Optional[str] = None
+    profile_image: Optional[UploadFile] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        username: str = Form(...),
+        account_id: str = Form(...),
+        bio: Optional[str] = Form(None),
+        profile_image: Optional[UploadFile] = None
+    ):
+        return cls(username=username, account_id=account_id, bio=bio, profile_image=profile_image)
 
-
-class UserUpdateRequest(BaseModel):
+class UserUpdateRequest:
     """
     PATCH /api/users/me
     - 일반 프로필 수정 API (로그인 세션 필요)
@@ -47,8 +56,17 @@ class UserUpdateRequest(BaseModel):
     username: Optional[str] = None
     account_id: Optional[str] = None
     bio: Optional[str] = None
-    profile_image_url: Optional[str] = None
-
+    profile_image: Optional[UploadFile] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        username: Optional[str] = Form(None),
+        account_id: Optional[str] = Form(None),
+        bio: Optional[str] = Form(None),
+        profile_image: Optional[UploadFile] = None
+    ):
+        return cls(username=username, account_id=account_id, bio=bio, profile_image=profile_image)
 
 # (Optional) 서버 내부에서 새 유저 생성용 스키마가 따로 필요하면 추가.
 # 회원가입은 auth.SignupRequest를 사용하므로 여기서는 생략 가능.
@@ -70,6 +88,16 @@ class UserDetailResponse(UserBase):
 
     class Config:
         orm_mode = True
+
+class InitialProfileResponse(UserBase):
+    """
+    POST /api/users/initial-profile
+    - 초기 프로필 설정 완료 후 반환
+    - access_token, refresh_token 포함
+    """
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
 
 
 class UserListItem(BaseModel):

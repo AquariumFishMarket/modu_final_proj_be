@@ -40,6 +40,12 @@ class WithdrawRequest(BaseModel):
     """
     password: str
 
+class RefreshRequest(BaseModel):
+    """
+    POST /api/auth/refresh
+    access 토큰 재발급 요청
+    """
+    refresh_token: str
 
 # -----------------------------
 # Responses

@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
+from fastapi import UploadFile, Form
 
 
 # -----------------------------
@@ -18,12 +19,27 @@ class ProductBase(BaseModel):
 # -----------------------------
 # 요청 스키마
 # -----------------------------
-class ProductCreate(ProductBase):
+class ProductCreate(BaseModel):
     """
     POST /api/products
     상품 등록
     """
-    pass
+    name: str
+    description: Optional[str] = None
+    price: float
+    product_url: Optional[str] = None
+    images: Optional[List[UploadFile]] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        name: str = Form(...),
+        description: Optional[str] = Form(None),
+        price: float = Form(...),
+        product_url: Optional[str] = Form(None),
+        images: Optional[List[UploadFile]] = None
+    ):
+        return cls(name=name, decription=description, price=price, product_url=product_url, images=images)
 
 
 class ProductUpdate(BaseModel):
@@ -35,7 +51,7 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     price: Optional[float] = None
     product_url: Optional[str] = None
-    image_urls: Optional[List[str]] = None
+    images: Optional[List[str]] = None
 
 
 # -----------------------------

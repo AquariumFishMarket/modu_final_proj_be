@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 from hashtag import HashtagResponse
+from fastapi import UploadFile, Form
 
 # --- 공통 스키마 ---
 class PostBase(BaseModel):
@@ -13,14 +14,31 @@ class PostBase(BaseModel):
 
 
 # --- 요청 스키마 ---
-class PostCreate(PostBase):
-    pass
+class PostCreate(BaseModel):
+    """
+    POST /api/posts
+    게시물 작성
+    """
+    title: str
+    content: str
+    images: Optional[List[UploadFile]] = None
+    hashtags: Optional[List[str]] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        title: str = Form(...),
+        content: str = Form(...),
+        images: Optional[List[UploadFile]] = None,
+        hashtags: Optional[List[str]] = None
+    ):
+        return cls(title=title, content=content, images=images, hashtags=hashtags)
 
 
 class PostUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
-    image_urls: Optional[List[str]] = None
+    images: Optional[List[str]] = None
     hashtags: Optional[List[str]] = None
 
 

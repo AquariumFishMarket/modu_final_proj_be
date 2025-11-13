@@ -2,12 +2,15 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import Base, engine, get_db
+from app.routers import auth, user
 
 app = FastAPI()
 
 # ORM 모델 import (예시로 user.py가 있다면)
 # from app.models import user
 
+app.include_router(auth.router)
+app.include_router(user.router)
 
 @app.get("/")
 def root():
