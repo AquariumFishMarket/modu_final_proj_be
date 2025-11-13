@@ -2,6 +2,7 @@
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
+from fastapi import UploadFile, Form
 
 
 # -----------------------------
@@ -34,8 +35,15 @@ class MessageCreateRequest(BaseModel):
     새 메시지 생성 요청
     """
     content: Optional[str] = None
-    image_url: Optional[str] = None
-
+    image: Optional[UploadFile] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        content: Optional[str] = Form(None),
+        image: Optional[UploadFile] = None
+    ):
+        return cls(content=content, image=image)
 
 class MessageUpdateRequest(BaseModel):
     """
@@ -43,7 +51,7 @@ class MessageUpdateRequest(BaseModel):
     메시지 수정
     """
     content: Optional[str] = None
-    image_url: Optional[str] = None
+    image: Optional[str] = None
 
 
 # -----------------------------

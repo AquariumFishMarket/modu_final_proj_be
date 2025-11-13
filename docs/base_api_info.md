@@ -5,6 +5,7 @@
 |                                 | POST   | `/api/auth/login`                 | 로그인 (JWT 토큰 발급)                 | ❌  |
 |                                 | POST   | `/api/auth/logout`                | 로그아웃 (JWT 무효화)                  | ✅  |
 |                                 | DELETE | `/api/auth/withdraw`              | 회원 탈퇴                           | ✅  |
+|                                 | POST   | `/api/auth/refresh`               | Refresh Token으로 새 Access Token 발급 | ❌ (Access Token 불필요, Refresh Token 필요) |
 | **👤 User (프로필 / 팔로우 / 검색)**    |        |                                   |                                 |    |
 |                                 | POST  | `/api/users/initial-profile`      | 초기 프로필 설정 (username, bio, 이미지 등) | ✅(임시 JWT)  |
 |                                 | GET    | `/api/users/me`                   | 내 프로필 조회                        | ✅  |
