@@ -21,9 +21,9 @@
 |                                 | GET    | `/api/users/{user_id}/likes/products`      | 특정 사용자가 좋아요한 상품 목록 조회            | ❌  |
 |                                 | GET    | `/api/users/search?query=`        | 사용자 검색                          | ❌  |
 | **🛍 Product (상품 등록 / 조회)**     |        |                                   |                                 |    |
-|                                 | POST   | `/api/products`                   | 상품 등록 (이름, 가격, 설명, 이미지, 재고. 이미지 최소 1장~최대 5장)     | ✅  |
+|                                 | POST   | `/api/products`                   | 상품 등록 (이름, 가격, 설명, 이미지. 이미지 최소 1장~최대 5장)     | ✅  |
 |                                 | GET    | `/api/products/{product_id}`      | 상품 상세 조회 (조회수/좋아요 수 포함)       | ❌  |
-|                                 | PUT    | `/api/products/{product_id}`      | 상품 수정 (이름, 가격, 설명, 이미지, 재고)     | ✅  |
+|                                 | PUT    | `/api/products/{product_id}`      | 상품 수정 (이름, 가격, 설명, 이미지)     | ✅  |
 |                                 | DELETE   | `/api/products/{product_id}`   | 상품 삭제                       | ✅  |
 |                                 | POST  | `/api/products/{product_id}/likes` | 상품 좋아요 등록           | ✅  |
 |                                 | DELETE   | `/api/products/{product_id}/likes` | 상품 좋아요 취소        | ✅  |

@@ -47,7 +47,7 @@ class InitialProfileRequest(BaseModel):
     ):
         return cls(username=username, account_id=account_id, bio=bio, profile_image=profile_image)
 
-class UserUpdateRequest:
+class UserUpdateRequest(BaseModel):
     """
     PATCH /api/users/me
     - 일반 프로필 수정 API (로그인 세션 필요)
