@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from fastapi import UploadFile, Form
+from fastapi import UploadFile, Form, File
 
 
 # -----------------------------
@@ -12,7 +12,7 @@ class ProductBase(BaseModel):
     name: str
     description: Optional[str] = None
     price: float
-    product_url = Optional[str] = None
+    product_url: Optional[str] = None
     image_urls: Optional[List[str]] = None  # 이미지 최소 1~최대 5장
 
 
@@ -37,9 +37,9 @@ class ProductCreate(BaseModel):
         description: Optional[str] = Form(None),
         price: float = Form(...),
         product_url: Optional[str] = Form(None),
-        images: Optional[List[UploadFile]] = None
+        images: Optional[List[UploadFile]] = File(None)
     ):
-        return cls(name=name, decription=description, price=price, product_url=product_url, images=images)
+        return cls(name=name, description=description, price=price, product_url=product_url, images=images)
 
 
 class ProductUpdate(BaseModel):
@@ -51,7 +51,18 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     price: Optional[float] = None
     product_url: Optional[str] = None
-    images: Optional[List[str]] = None
+    images: Optional[List[UploadFile]] = None
+    
+    @classmethod
+    def as_form(
+        cls,
+        name: Optional[str] = Form(None),
+        description: Optional[str] = Form(None),
+        price: Optional[float] = Form(None),
+        product_url: Optional[str] = Form(None),
+        images: Optional[List[UploadFile]] = File(None)
+    ):
+        return cls(name=name, description=description, price=price, product_url=product_url, images=images)
 
 
 # -----------------------------
@@ -85,7 +96,7 @@ class ProductDetailResponse(BaseModel):
 
 class ProductListItem(BaseModel):
     """
-    상품 목록 조회용 (판매중인 상품 리스트)
+    상품 목록 조회용 (상품 리스트)
     """
     id: int
     name: str

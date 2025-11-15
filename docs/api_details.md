@@ -120,7 +120,7 @@
 ### 4. DELETE `/api/auth/withdraw`
 
 - **설명**: Access Token 기반 회원 탈퇴.
-    - 비밀번호 확인 후 Soft Delete (is_active=False). 해당 사용자의 계정 비활성화시킴.
+    - 비밀번호 확인 후 Soft Delete (is_active=False 처리). 해당 사용자의 계정 비활성화시킴.
     - 해당 사용자의 모든 세션 무효화
 
 #### Request
@@ -495,3 +495,347 @@
 - 해당 사용자의 팔로워가 없으면 빈 배열 `[]` 반환
 
 
+### 10. GET `/api/users/{user_id}/products`
+- **설명**: 특정 사용자가 등록한 상품 목록 조회
+
+#### Request
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| user_id | 6 |
+
+-> url 구조는 `/api/users/6/products`가 됨.
+
+#### Response
+
+- ProductDetailResponse[] (정상 응답 시)
+```json
+[
+    {
+        "id": 2,
+        "name": "다이어그램들",
+        "description": "새로 추가한 다이어그램이 있습니다.",
+        "price": 20000.0,
+        "product_url": "http://another-fake-product/erd",
+        "image_urls": [
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/f3c1422a-7f7e-4cd1-9334-5674e396c667.png",
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/c6e81efb-8d33-4e41-b32c-2ef11a1b5405.png",
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/3f9a3701-0519-4350-ac75-0f0188bf234a.png"
+        ],
+        "seller_id": 6,
+        "seller_account_id": "test123",
+        "seller_username": "testuser",
+        "seller_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+        "like_count": 1,
+        "view_count": 1,
+        "created_at": "2025-11-14T16:52:27.918732+09:00",
+        "updated_at": "2025-11-14T17:15:38.464857+09:00",
+        "is_blurred": false,
+        "is_deleted": false,
+        "report_count": 0
+    }
+]
+```
+
+#### 비고
+- 사용자가 존재하지 않을 경우 HTTPException 발생
+- 해당 사용자가 등록한 상품이 없을 경우 빈 배열 `[]` 반환
+
+### 11. GET `/api/users/{user_id}/likes/products`
+- **설명** : 특정 사용자가 좋아요한 상품 목록 조회
+
+#### Request
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| user_id | 6 |
+
+-> url 구조는 `/api/users/6/likes/products`가 됨.
+
+#### Response
+
+- ProductDetailResponse[] (정상 응답 시)
+```json
+[
+    {
+        "id": 2,
+        "name": "변경된 다이어그램들",
+        "description": "새로 추가한 다이어그램이 있습니다.",
+        "price": 20000.0,
+        "product_url": "http://another-fake-product/erd",
+        "image_urls": [
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/f3c1422a-7f7e-4cd1-9334-5674e396c667.png",
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/c6e81efb-8d33-4e41-b32c-2ef11a1b5405.png",
+            "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/3f9a3701-0519-4350-ac75-0f0188bf234a.png"
+        ],
+        "seller_id": 6,
+        "seller_account_id": "test123",
+        "seller_username": "testuser",
+        "seller_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+        "like_count": 1,
+        "view_count": 1,
+        "created_at": "2025-11-14T16:52:27.918732+09:00",
+        "updated_at": "2025-11-14T17:15:38.464857+09:00",
+        "is_blurred": false,
+        "is_deleted": false,
+        "report_count": 0
+    }
+]
+```
+
+
+### Product
+
+### 1. POST `/api/product`
+- **설명** : 새로운 상품 등록
+    - 이미지 파일 여러 장 (최대 5장) 업로드 가능
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : multipart/form-data
+    - `Authorization` : bearer `<access_token>`
+
+- **Body** : ProductCreate
+
+    - form-data
+
+    | key | type | example |
+    |------|------|----------|
+    | name | text | `새 다이어그램` |
+    | description | text | `간단한 다이어그램들입니다` |
+    | price | text | `10000` |
+    | product_url | text | `http://fake-product/erd` |
+    | images  | file | |
+
+    - name, price는 필수 입력
+
+#### Response
+
+- ProductDetailResponse (정상 응답 시)
+```json
+{
+    "id": 5,
+    "name": "새 다이어그램들",
+    "description": "간단한 다이어그램들입니다.",
+    "price": 10000.0,
+    "product_url": "http://fake-product/erd",
+    "image_urls": [],
+    "seller_id": 6,
+    "seller_account_id": "test123",
+    "seller_username": "testuser",
+    "seller_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+    "like_count": 0,
+    "view_count": 0,
+    "created_at": "2025-11-14T17:15:15.908922+09:00",
+    "updated_at": "2025-11-14T17:15:15.908922+09:00",
+    "is_blurred": false,
+    "is_deleted": false,
+    "report_count": 0
+}
+```
+
+#### 비고
+- 이미지 파일이 있을 경우 S3 스토리지에 업로드됨.
+- 이미지 파일을 5개보다 많이 첨부해서 request 전송할 경우 HTTPException 발생
+
+
+### 2. GET `/api/products/{product_id}`
+- **설명** : 특정 상품 상세 조회
+
+#### Request
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| product_id | 2 |
+
+-> url 구조는 `/api/products/2`가 됨.
+
+#### Response
+
+- ProductDetailResponse (정상 응답 시)
+```json
+{
+    "id": 2,
+    "name": "다이어그램들",
+    "description": "다이어그램",
+    "price": 12000.0,
+    "product_url": "http://fake-product/erd",
+    "image_urls": [],
+    "seller_id": 6,
+    "seller_account_id": "test123",
+    "seller_username": "testuser",
+    "seller_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+    "like_count": 0,
+    "view_count": 1,
+    "created_at": "2025-11-14T16:52:27.918732+09:00",
+    "updated_at": "2025-11-14T17:08:52.549388+09:00",
+    "is_blurred": false,
+    "is_deleted": false,
+    "report_count": 0
+}
+```
+
+#### 비고
+- 해당 api 조회 시, view_count(조회수) 1 증가
+- 존재하지 않은 상품 조회 시 HTTPException 발생
+
+
+### 3. PUT `/api/products/{product_id}`
+- **설명** : 사용자 자신의 상품 수정
+    - 이미지 파일 여러 장 (최대 5장) 업로드 가능
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : multipart/form-data
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| product_id | 2 |
+
+-> url 구조는 `/api/products/2`가 됨.
+
+- **Body** : ProductUpdate
+
+    - form-data
+
+    | key | type | example |
+    |------|------|----------|
+    | name | text | `변경된 다이어그램들` |
+    | description | text | `새로 추가한 다이어그램이 있습니다.` |
+    | price | text | `20000` |
+    | product_url | text | `http://another-fake-product/erd` |
+    | images  | file | [ `product01.jpg`, `product02.jpg`, `product03.jpg`] |
+
+    - 모든 필드는 **optional**
+
+#### Response
+
+- ProductDetailResponse (정상 응답 시)
+```json
+{
+    "id": 2,
+    "name": "변경된 다이어그램들",
+    "description": "새로 추가한 다이어그램이 있습니다.",
+    "price": 20000.0,
+    "product_url": "http://another-fake-product/erd",
+    "image_urls": [
+        "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/f3c1422a-7f7e-4cd1-9334-5674e396c667.png",
+        "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/c6e81efb-8d33-4e41-b32c-2ef11a1b5405.png",
+        "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/products/3f9a3701-0519-4350-ac75-0f0188bf234a.png"
+    ],
+    "seller_id": 6,
+    "seller_account_id": "test123",
+    "seller_username": "testuser",
+    "seller_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+    "like_count": 0,
+    "view_count": 1,
+    "created_at": "2025-11-14T16:52:27.918732+09:00",
+    "updated_at": "2025-11-14T17:08:52.549388+09:00",
+    "is_blurred": false,
+    "is_deleted": false,
+    "report_count": 0
+}
+```
+
+#### 비고
+- 제공된 필드만 업데이트됨.
+- 사용자 본인이 등록하지 않은 상품을 수정하려고 하면 HTTPException 발생
+
+
+### 4. DELETE `/api/products/{product_id}`
+- **설명** : 자신의 상품을 삭제
+
+#### Request
+
+- **Headers**
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| product_id | 4 |
+
+-> url 구조는 `/api/products/4`가 됨.
+
+#### Response
+
+- 정상 응답 시
+```json
+{
+    "detail": "상품이 삭제되었습니다."
+}
+```
+
+#### 비고
+- 본인이 등록하지 않은 상품을 삭제 시도 시 HTTPException 발생
+- 실제 상품 삭제가 아닌, Soft Delete 방식(is_deleted=True 처리)
+
+### 5. POST `/api/products/{product_id}/likes`
+- **설명** : 특정 상품 좋아요 등록
+
+#### Request
+
+- **Headers**
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| product_id | 2 |
+
+-> url 구조는 `/api/products/2/likes`가 됨.
+
+#### Response
+
+- 정상 응답 시
+```json
+{
+    "detail": "좋아요가 등록되었습니다."
+}
+```
+
+#### 비고
+- 이미 좋아요한 상품에 대해 좋아요 등록 시도 시 HTTPException 발생
+- 본인이 등록한 상품에 대해 좋아요 등록도 가능
+
+
+### 6. DELETE `/api/products/{product_id}/likes`
+- **설명** : 특정 상품 좋아요 취소
+
+#### Request
+
+- **Headers**
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| product_id | 2 |
+
+-> url 구조는 `/api/products/2/likes`가 됨.
+
+#### Response
+
+- 정상 응답 시
+```json
+{
+    "detail": "좋아요가 취소되었습니다."
+}
+```
+
+#### 비고
+- 좋아요 등록하지 않은 상품을 좋아요 취소 시도할 경우 HTTPException 발생

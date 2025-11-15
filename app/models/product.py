@@ -19,7 +19,7 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     seller_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
-    title = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     price = Column(Integer, nullable=False)
     product_url = Column(Text, nullable=True)
