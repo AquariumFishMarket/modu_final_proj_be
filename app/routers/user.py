@@ -6,9 +6,12 @@ from typing import List
 
 from app.database import get_db
 from app.schemas.user import InitialProfileRequest, InitialProfileResponse, UserDetailResponse, UserUpdateRequest, UserListItem, FollowResponse
+from app.schemas.product import ProductDetailResponse
 from app.models.user import User as UserModel
 from app.models.follow import Follow as FollowModel
 from app.models.session import Session as SessionModel
+from app.models.product import Product as ProductModel
+from app.models.product_like import ProductLike as ProductLikeModel
 from app.core.security import get_current_user, get_current_user_from_temp_token, create_access_token, create_refresh_token, hash_password
 from app.utils.s3_bucket import upload_image_to_s3
 
@@ -343,4 +346,91 @@ def get_followings(user_id: int, db: Session = Depends(get_db)):
         )
         for f in followings
     ]
+    return result
+
+
+# -----------------------------
+# 특정 사용자의 상품 목록 조회
+# -----------------------------
+@router.get("/{user_id}/products", response_model=List[ProductDetailResponse])
+def get_user_products(user_id: int, db: Session = Depends(get_db)):
+    """
+    특정 사용자가 판매 중인 상품 목록 조회
+    """
+    
+    user = db.query(UserModel).filter(UserModel.id == user_id, UserModel.is_active == True).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="사용자를 찾을 수 없습니다.")
+
+    products = db.query(ProductModel).filter(
+        ProductModel.seller_id == user_id,
+        ProductModel.is_deleted == False
+    ).all()
+
+    result = []
+    for product in products:
+        image_urls = [img.image_url for img in product.images]
+        result.append(ProductDetailResponse(
+            id=product.id,
+            name=product.name,
+            description=product.description,
+            price=product.price,
+            product_url=product.product_url,
+            image_urls=image_urls,
+            seller_id=user.id,
+            seller_account_id=user.account_id,
+            seller_username=user.username,
+            seller_image_url=user.profile_image_url or "",
+            like_count=product.like_count,
+            view_count=product.view_count,
+            created_at=product.created_at,
+            updated_at=product.updated_at,
+            is_blurred=product.is_blurred,
+            is_deleted=product.is_deleted,
+            report_count=product.report_count,
+        ))
+    return result
+
+
+# -----------------------------
+# 특정 사용자가 좋아요한 상품 목록 조회
+# -----------------------------
+@router.get("/{user_id}/likes/products", response_model=List[ProductDetailResponse])
+def get_user_liked_products(user_id: int, db: Session = Depends(get_db)):
+    """
+    특정 사용자가 좋아요한 상품 목록 조회
+    """
+    
+    user = db.query(UserModel).filter(UserModel.id == user_id, UserModel.is_active == True).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="사용자를 찾을 수 없습니다.")
+
+    likes = db.query(ProductLikeModel).filter(ProductLikeModel.user_id == user_id).all()
+    result = []
+
+    for like in likes:
+        product = like.product
+        if product.is_deleted:
+            continue
+        image_urls = [img.image_url for img in product.images]
+        seller = product.seller
+        result.append(ProductDetailResponse(
+            id=product.id,
+            name=product.name,
+            description=product.description,
+            price=product.price,
+            product_url=product.product_url,
+            image_urls=image_urls,
+            seller_id=seller.id,
+            seller_account_id=seller.account_id,
+            seller_username=seller.username,
+            seller_image_url=seller.profile_image_url or "",
+            like_count=product.like_count,
+            view_count=product.view_count,
+            created_at=product.created_at,
+            updated_at=product.updated_at,
+            is_blurred=product.is_blurred,
+            is_deleted=product.is_deleted,
+            report_count=product.report_count,
+        ))
     return result

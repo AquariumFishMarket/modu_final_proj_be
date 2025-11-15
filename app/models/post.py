@@ -17,6 +17,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
+    title = Column(Text, nullable=False)
     content = Column(Text, nullable=True)
 
     like_count = Column(Integer, default=0, nullable=False)
