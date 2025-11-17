@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import Base, engine, get_db
-from app.routers import auth, user, product
+from app.routers import auth, user, product, post
 
 app = FastAPI()
 
@@ -12,6 +12,7 @@ app = FastAPI()
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(product.router)
+app.include_router(post.router)
 
 @app.get("/")
 def root():
