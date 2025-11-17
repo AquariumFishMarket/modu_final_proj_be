@@ -7,13 +7,17 @@ from typing import List
 from app.database import get_db
 from app.schemas.user import InitialProfileRequest, InitialProfileResponse, UserDetailResponse, UserUpdateRequest, UserListItem, FollowResponse
 from app.schemas.product import ProductDetailResponse
+from app.schemas.post import PostDetailResponse
 from app.models.user import User as UserModel
 from app.models.follow import Follow as FollowModel
 from app.models.session import Session as SessionModel
 from app.models.product import Product as ProductModel
 from app.models.product_like import ProductLike as ProductLikeModel
+from app.models.post import Post as PostModel
+from app.models.post_like import PostLike as PostLikeModel
 from app.core.security import get_current_user, get_current_user_from_temp_token, create_access_token, create_refresh_token, hash_password
 from app.utils.s3_bucket import upload_image_to_s3
+from app.routers.post import map_post_to_response
 
 router = APIRouter(prefix="/api/users", tags=["User"])
 
@@ -434,3 +438,43 @@ def get_user_liked_products(user_id: int, db: Session = Depends(get_db)):
             report_count=product.report_count,
         ))
     return result
+
+
+# -----------------------------
+# 특정 사용자의 게시글 목록 조회
+# -----------------------------
+@router.get("/{user_id}/posts", response_model=List[PostDetailResponse])
+def get_user_posts(user_id: int, db: Session = Depends(get_db)):
+    """
+    특정 사용자의 게시글 목록 조회
+    """
+    user = db.query(UserModel).filter(UserModel.id == user_id, UserModel.is_active == True).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
+    posts = db.query(PostModel).filter(
+        PostModel.user_id == user_id,
+        PostModel.is_deleted == False
+    ).order_by(PostModel.created_at.desc()).all()
+
+    return [map_post_to_response(post) for post in posts]
+
+
+# -----------------------------
+# 특정 사용자가 좋아요한 게시글 목록 조회
+# -----------------------------
+@router.get("/{user_id}/likes/posts", response_model=List[PostDetailResponse])
+def get_user_liked_posts(user_id: int, db: Session = Depends(get_db)):
+    """
+    특정 사용자가 좋아요한 게시글 목록 조회
+    """
+    user = db.query(UserModel).filter(UserModel.id == user_id, UserModel.is_active == True).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
+    liked_posts = db.query(PostModel).join(PostLikeModel).filter(
+        PostLikeModel.user_id == user_id,
+        PostModel.is_deleted == False
+    ).order_by(PostLikeModel.created_at.desc()).all()
+
+    return [map_post_to_response(post) for post in liked_posts]
