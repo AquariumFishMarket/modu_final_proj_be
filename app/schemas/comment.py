@@ -16,7 +16,7 @@ class CommentCreate(CommentBase):
     POST /api/comments/
     - 게시글에 댓글 작성 시 사용
     """
-    post_id: int
+    pass
 
 
 class CommentUpdate(BaseModel):
