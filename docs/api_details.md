@@ -1349,3 +1349,257 @@
 
 ### 비고
 - 해당 게시글에 좋아요한 사용자가 없으면 빈 배열 `[]` 반환
+
+
+## Comment
+
+### 1. POST `/api/posts/{post_id}/comments`
+- **설명** : 특정 게시글에 댓글 작성
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : application/json
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| post_id | 2 |
+
+-> url 구조는 `/api/posts/2/comments`가 됨.
+
+- **Body** : CommentCreate
+
+    - raw
+    ```json
+    {
+        "content" : "첫 번째 댓글입니다."
+    }
+    ```
+
+#### Response
+
+- CommentResponse (정상 응답 시)
+```json
+    {
+        "id": 1,
+        "post_id": 2,
+        "user_id": 6,
+        "username": "testuser",
+        "account_id": "test123",
+        "profile_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+        "content": "첫 번째 댓글입니다.",
+        "parent_comment_id": null,
+        "created_at": "2025-11-18T00:40:34.820944+09:00",
+        "updated_at": "2025-11-18T00:40:34.820944+09:00",
+        "is_blurred": false,
+        "is_deleted": false,
+        "report_count": 0,
+        "replies": []
+    }
+```
+
+#### 비고
+- 존재하지 않는 게시글에 댓글 작성하려 할 경우 HTTPException 발생
+
+
+### 2. GET `/api/posts/{post_id}/comments`
+- **설명** : 특정 게시글의 댓글 목록 조회
+    - 응답에는 댓글, 대댓글이 모두 포함됨.
+
+#### Request
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| post_id | 2 |
+
+-> url 구조는 `/api/posts/2/comments`가 됨.
+
+#### Response
+
+- CommentResponse[] (정상 응답 시)
+```json
+[
+    {
+        "id": 1,
+        "post_id": 2,
+        "user_id": 6,
+        "username": "testuser",
+        "account_id": "test123",
+        "profile_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+        "content": "첫 번째 댓글입니다.",
+        "parent_comment_id": null,
+        "created_at": "2025-11-18T00:40:34.820944+09:00",
+        "updated_at": "2025-11-18T00:40:34.820944+09:00",
+        "is_blurred": false,
+        "is_deleted": false,
+        "report_count": 0,
+        "replies": []
+    },
+    {
+        "id": 2,
+        "post_id": 2,
+        "user_id": 6,
+        "username": "testuser",
+        "account_id": "test123",
+        "profile_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+        "content": "두 번째 댓글입니다.",
+        "parent_comment_id": null,
+        "created_at": "2025-11-18T00:40:46.395370+09:00",
+        "updated_at": "2025-11-18T00:40:46.395370+09:00",
+        "is_blurred": false,
+        "is_deleted": false,
+        "report_count": 0,
+        "replies": []
+    }
+]
+```
+
+#### 비고
+- 존재하지 않는 게시글에 대해 댓글 목록 조회 시 HTTPException 발생
+- 댓글이 없으면 빈 배열 `[]` 반환
+
+
+### 3. PATCH `/api/posts/{post_id}/comments/{comment_id}`
+- **설명** : 댓글 내용 수정 (댓글 작성자 본인만 가능)
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : application/json
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| post_id | 2 |
+| comment_id | 1 |
+
+-> url 구조는 `/api/posts/2/comments/1`가 됨.
+
+- **Body** : CommentUpdate
+
+    - raw
+    ```json
+    {
+        "content" : "이 댓글은 수정되었습니다."
+    }
+    ```
+
+#### Response
+
+- CommentResponse (정상 응답 시)
+```json
+{
+    "id": 1,
+    "post_id": 2,
+    "user_id": 6,
+    "username": "testuser",
+    "account_id": "test123",
+    "profile_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+    "content": "이 댓글은 수정되었습니다.",
+    "parent_comment_id": null,
+    "created_at": "2025-11-18T00:40:34.820944+09:00",
+    "updated_at": "2025-11-18T00:41:22.045239+09:00",
+    "is_blurred": false,
+    "is_deleted": false,
+    "report_count": 0,
+    "replies": []
+}
+```
+
+#### 비고
+- 사용자 본인이 작성하지 않은 댓글을 수정하려 시도할 경우 HTTPException 발생
+- 존재하지 않는 댓글을 수정하려 시도할 경우 HTTPException 발생
+
+
+### 4. DELETE `/api/posts/{post_id}/comments/{comment_id}`
+- **설명** : 특정 댓글 삭제 (작성자 본인만 가능)
+    - 삭제하려는 댓글에 대댓글이 존재한다면, 대댓글까지 삭제
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : application/json
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| post_id | 2 |
+| comment_id | 2 |
+
+-> url 구조는 `/api/posts/2/comments/2`가 됨.
+
+#### Response
+
+- 정상 응답 시
+```json
+{
+    "detail": "댓글이 삭제되었습니다."
+}
+```
+
+#### 비고
+- 본인이 작성하지 않은 댓글을 삭제 시도 시 HTTPException 발생
+- 실제 댓글 삭제가 아닌, Soft Delete 방식(is_deleted=True 처리). 대댓글도 Soft Delete 방식으로 처리함.
+    - post의 comment_count는 삭제하는 댓글, 대댓글 수만큼 감소함.
+
+
+### 5. POST `/api/posts/{post_id}/comments/{comment_id}/replies`
+- **설명** : 특정 댓글에 대댓글 작성
+
+#### Request
+
+- **Headers**
+    - `Content-Type` : application/json
+    - `Authorization` : bearer `<access_token>`
+
+- **Path Parameter**
+
+| key | example |
+| --- | ------- |
+| post_id | 2 |
+| comment_id | 2 |
+
+-> url 구조는 `/api/posts/2/comments/2/replies`가 됨.
+
+- **Body** : CommentCreate
+
+    - raw
+    ```json
+    {
+        "content" : "이것은 대댓글입니다."
+    }
+    ```
+
+#### Response
+
+- CommentResponse (정상 응답 시)
+```json
+{
+    "id": 4,
+    "post_id": 2,
+    "user_id": 6,
+    "username": "testuser",
+    "account_id": "test123",
+    "profile_image_url": "https://fish-market-files.s3.ap-northeast-2.amazonaws.com/profile-images/b7d20faa-726c-4c89-8848-5a505cd41bd7.jpg",
+    "content": "이것은 대댓글입니다.",
+    "parent_comment_id": 2,
+    "created_at": "2025-11-18T00:41:55.251528+09:00",
+    "updated_at": "2025-11-18T00:41:55.251528+09:00",
+    "is_blurred": false,
+    "is_deleted": false,
+    "report_count": 0,
+    "replies": []
+}
+```
+
+#### 비고
+- 존재하지 않는 댓글에 대댓글 작성하려 할 경우 HTTPException 발생
